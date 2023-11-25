@@ -1,5 +1,8 @@
+import MainCarousel from './MainCarousel'
+
 const Home = () => {
-  return <div>Home</div>;
+  return <div className='home'><MainCarousel>
+    </MainCarousel></div>;
 };
 
 export default Home;
