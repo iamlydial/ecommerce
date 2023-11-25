@@ -1,20 +1,15 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import {
-  IconButton,
-  Box,
-  Typography,
-  useTheme,
-  Button,
-} from "@mui/icons-material";
-import AddIcon from "@mui/material/Add";
+import { IconButton, Box, Typography, Button } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { shades } from "../theme";
 import { addToCart } from "../state";
-import { useNavifate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Item = ({ item, width }) => {
-  const navigate = useNavifate();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [count, setCount] = useState(1);
   const [isHovered, setIsHovered] = useState(false);
@@ -41,13 +36,13 @@ const Item = ({ item, width }) => {
         <img
           alt={item.name}
           width="300px"
-          heigth="400px"
-          src={`http://localhost:1337{url}`}
+          height="400px"
+          src={`http://localhost:1337${url}`}
           onClick={() => navigate(`/item/${item.id}`)}
           style={{ cursor: "pointer" }}
         />
         <Box
-          display={isHovered ? "blocked" : "none"}
+          display={isHovered ? "block" : "none"}
           position="absolute"
           bottom="10%"
           left="0"
@@ -85,8 +80,10 @@ const Item = ({ item, width }) => {
       <Box mt="3px">
         <Typography variant="subtitle2" color={neutral.dark}>
           {category
-            .replace(/([A-Z])/g, "$1")
-            .replace(/^./, (str) => str.toUpperCase())}
+            ? category
+                .replace(/([A-Z])/g, " $1")
+                .replace(/^./, (str) => str.toUpperCase())
+            : ""}
         </Typography>
         <Typography>{name}</Typography>
         <Typography fontWeight="bold">${price}</Typography>
@@ -94,3 +91,5 @@ const Item = ({ item, width }) => {
     </Box>
   );
 };
+
+export default Item;
