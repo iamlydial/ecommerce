@@ -1,13 +1,15 @@
+import { Box, Button, IconButton, Typography } from "@mui/material";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import Item from "../../components/Item";
+import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import { shades } from "../../theme";
 import { addToCart } from "../../state";
-import { useParams } from "react-router-dom";
-import Item from "../../components/Item";
-import { Box, Typography } from "@mui/material";
+import { useDispatch } from "react-redux";
 
 const ItemDetails = () => {
   const dispatch = useDispatch();
@@ -16,6 +18,10 @@ const ItemDetails = () => {
   const [count, setCount] = useState(1);
   const [item, setItem] = useState(null);
   const [items, setItems] = useState([]);
+  console.log(
+    "Long Description:",
+    item?.attributes?.longDescription?.[0].children?.[0]?.text
+  );
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -24,25 +30,29 @@ const ItemDetails = () => {
   async function getItem() {
     const item = await fetch(
       `http://localhost:1337/api/items/${itemId}?populate=image`,
-      { method: "GET" }
+      {
+        method: "GET",
+      }
     );
     const itemJson = await item.json();
     setItem(itemJson.data);
   }
 
   async function getItems() {
-    const item = await fetch(
-      `http://localhost:1337/api/items/?populate=image`,
-      { method: "GET" }
+    const items = await fetch(
+      `http://localhost:1337/api/items?populate=image`,
+      {
+        method: "GET",
+      }
     );
-    const itemJson = await item.json();
-    setItem(itemJson.data);
+    const itemsJson = await items.json();
+    setItems(itemsJson.data);
   }
 
   useEffect(() => {
     getItem();
     getItems();
-  }, [itemId]);
+  }, [itemId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Box width="80%" m="80px auto">
@@ -57,19 +67,22 @@ const ItemDetails = () => {
             style={{ objectFit: "contain" }}
           />
         </Box>
+
         {/* ACTIONS */}
         <Box flex="1 1 50%" mb="40px">
           <Box display="flex" justifyContent="space-between">
-            <Box>Home / Item</Box>
+            <Box>Home/Item</Box>
             <Box>Prev Next</Box>
           </Box>
+
           <Box m="65px 0 25px 0">
             <Typography variant="h3">{item?.attributes?.name}</Typography>
-            <Typography>{item?.attributes?.price}</Typography>
+            <Typography>${item?.attributes?.price}</Typography>
             <Typography sx={{ mt: "20px" }}>
-              {item?.attributes?.description}
+            {item?.attributes?.longDescription?.[0].children?.[0]?.text}
             </Typography>
           </Box>
+
           <Box display="flex" alignItems="center" minHeight="50px">
             <Box
               display="flex"
@@ -77,8 +90,69 @@ const ItemDetails = () => {
               border={`1.5px solid ${shades.neutral[300]}`}
               mr="20px"
               p="2px 5px"
-            ></Box>
+            >
+              <IconButton onClick={() => setCount(Math.max(count - 1, 0))}>
+                <RemoveIcon />
+              </IconButton>
+              <Typography sx={{ p: "0 5px" }}>{count}</Typography>
+              <IconButton onClick={() => setCount(count + 1)}>
+                <AddIcon />
+              </IconButton>
+            </Box>
+            <Button
+              sx={{
+                backgroundColor: "#222222",
+                color: "white",
+                borderRadius: 0,
+                minWidth: "150px",
+                padding: "10px 40px",
+              }}
+              onClick={() => dispatch(addToCart({ item: { ...item, count } }))}
+            >
+              ADD TO CART
+            </Button>
           </Box>
+          <Box>
+            <Box m="20px 0 5px 0" display="flex">
+              <FavoriteBorderOutlinedIcon />
+              <Typography sx={{ ml: "5px" }}>ADD TO WISHLIST</Typography>
+            </Box>
+            <Typography>CATEGORIES: {item?.attributes?.category}</Typography>
+          </Box>
+        </Box>
+      </Box>
+
+      {/* INFORMATION */}
+      <Box m="20px 0">
+        <Tabs value={value} onChange={handleChange}>
+          <Tab label="DESCRIPTION" value="description" />
+          <Tab label="REVIEWS" value="reviews" />
+        </Tabs>
+      </Box>
+      <Box display="flex" flexWrap="wrap" gap="15px">
+        {value === "description" && (
+          <div>
+            <p>{item?.attributes?.longDescription?.[0].children?.[0]?.text}</p>
+          </div>
+        )}
+        {value === "reviews" && <div>reviews</div>}
+      </Box>
+
+      {/* RELATED ITEMS */}
+      <Box mt="50px" width="100%">
+        <Typography variant="h3" fontWeight="bold">
+          Related Products
+        </Typography>
+        <Box
+          mt="20px"
+          display="flex"
+          flexWrap="wrap"
+          columnGap="1.33%"
+          justifyContent="space-between"
+        >
+          {items.slice(0, 4).map((item, i) => (
+            <Item key={`${item.name}-${i}`} item={item} />
+          ))}
         </Box>
       </Box>
     </Box>
