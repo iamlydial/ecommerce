@@ -18,14 +18,11 @@ const ItemDetails = () => {
   const [count, setCount] = useState(1);
   const [item, setItem] = useState(null);
   const [items, setItems] = useState([]);
-  console.log(
-    "Long Description:",
-    item?.attributes?.longDescription?.[0].children?.[0]?.text
-  );
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+  console.log(item, "item");
 
   async function getItem() {
     const item = await fetch(
@@ -79,7 +76,7 @@ const ItemDetails = () => {
             <Typography variant="h3">{item?.attributes?.name}</Typography>
             <Typography>${item?.attributes?.price}</Typography>
             <Typography sx={{ mt: "20px" }}>
-            {item?.attributes?.longDescription?.[0].children?.[0]?.text}
+              {item?.attributes?.longDescription?.[0].children?.[0]?.text}
             </Typography>
           </Box>
 
