@@ -79,13 +79,13 @@ const CartMenu = () => {
                       alt={item?.name}
                       width="123px"
                       height="164px"
-                      src={`http://localhost:1337${item?.attributes?.image?.data?.attributes?.formats?.medium?.url}`}
+                      src={`http://localhost:1337${item?.item?.attributes?.image?.data?.attributes?.formats?.medium?.url}`}
                     />
                   </Box>
                   <Box flex="1 1 60%">
                     <FlexBox mb="5px">
                       <Typography fontWeight="bold">
-                        {item?.attributes?.name}
+                        {item?.item?.attributes?.name}
                       </Typography>
                       <IconButton
                         onClick={() =>
@@ -111,7 +111,7 @@ const CartMenu = () => {
                         >
                           <RemoveIcon />
                         </IconButton>
-                        <Typography>{item?.count}</Typography>
+                        <Typography>{item?.item?.count}</Typography>
                         <IconButton
                           onClick={() =>
                             dispatch(increaseCount({ id: item.id }))
@@ -121,7 +121,7 @@ const CartMenu = () => {
                         </IconButton>
                       </Box>
                       <Typography fontWeight="bold">
-                        ${item?.attributes?.price}
+                        ${item?.item?.attributes?.price}
                       </Typography>
                     </FlexBox>
                   </Box>
